@@ -46,9 +46,13 @@ async def check_connection() -> None:
             r.raise_for_status()
     except Exception as e:
         if _url_provided:
-            sys.exit(f"Cannot reach deployment at {DEPLOYMENT_URL}\nCheck the URL and try again.\n{e}")
+            sys.exit(
+                f"Cannot reach deployment at {DEPLOYMENT_URL}\nCheck the URL and try again.\n{e}"
+            )
         else:
-            sys.exit(f"Cannot reach local dev server at {DEPLOYMENT_URL}\nIs `langgraph dev` running?\n{e}")
+            sys.exit(
+                f"Cannot reach local dev server at {DEPLOYMENT_URL}\nIs `langgraph dev` running?\n{e}"
+            )
 
 
 async def main() -> None:
@@ -99,7 +103,9 @@ async def main() -> None:
         content = last.get("content", "")
         if isinstance(content, list):
             content = "".join(
-                b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text"
+                b.get("text", "")
+                for b in content
+                if isinstance(b, dict) and b.get("type") == "text"
             )
         print(f"{CHECK} Response (truncated): {str(content)[:300]}...")
 
@@ -128,7 +134,12 @@ async def main() -> None:
     # ---------------------------------------------------------------------------
 
     history = await client.threads.get_history(thread["thread_id"])
-    print(f"\n{CHECK} Checkpointer history — {len(history)} checkpoints saved for this thread")
+    print(
+        f"\n{CHECK} Checkpointer history — {len(history)} checkpoints saved for this thread"
+    )
+
+    for d in history:
+        print(f'\t- checkpoint_id: {d["checkpoint"]["checkpoint_id"]}')
 
     # ---------------------------------------------------------------------------
     # Step 6: Clean up
